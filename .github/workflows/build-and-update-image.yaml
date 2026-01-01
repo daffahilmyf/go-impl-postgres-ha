@@ -1,19 +1,36 @@
 name: Build and Update Image Tag
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    branches: [main]
-    types:
-      - completed
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'kustomize/**'
+      - '.github/workflows/**'
 
 permissions:
   contents: write
   packages: write
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run_ci: ${{ steps.filter.outputs.run_ci }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            run_ci:
+              - '!deployments/**'
+              - '!.github/workflows/**'
+
   build-push-update:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: changes
+    if: needs.changes.outputs.run_ci == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,7 +44,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
