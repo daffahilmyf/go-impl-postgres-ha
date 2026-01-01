@@ -6,6 +6,8 @@ on:
       - main
     paths-ignore:
       - 'kustomize/**'
+      - 'docs/**'
+      - 'README.md'
       - '.github/workflows/**'
 
 permissions:
