@@ -4,17 +4,18 @@ kind: Kustomization
 namespace: k3s-ds-learn
 
 resources:
-  - ../../base
+- ../../base
 
 images:
-  - name: ghcr.io/daffahilmyf/go-impl-postgres-ha
-    newTag: latest
+- name: ghcr.io/daffahilmyf/go-impl-postgres-ha
+  newName: ghcr.io/daffahilmyf/go-impl-postgres-ha
+  newTag: 34e9475d048eef79a8bcaadb859fd683fed301fe
 
 configMapGenerator:
-  - name: app-config
-    behavior: replace
-    files:
-      - config.yaml
+- behavior: replace
+  files:
+  - config.yaml
+  name: app-config
 
 patchesStrategicMerge:
-  - replicas.yaml
+- replicas.yaml
