@@ -20,4 +20,6 @@ mem.pprof
 .vscode/
 
 config.yaml
+secret.yaml
+sealed-secrets-cert.pem
 !kustomize/**/config.yaml

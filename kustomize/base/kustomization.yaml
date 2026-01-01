@@ -7,7 +7,6 @@ resources:
   - deployment-outbox-worker.yaml
   - deployment-consumer.yaml
   - service-api.yaml
-  - sealed-secret.yaml
 
 configMapGenerator:
   - name: app-config
