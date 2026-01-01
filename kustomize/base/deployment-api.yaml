@@ -37,13 +37,13 @@ spec:
               path: /healthz
               port: http
             initialDelaySeconds: 5
-            periodSeconds: 5
+            periodSeconds: 15
           livenessProbe:
             httpGet:
               path: /healthz
               port: http
             initialDelaySeconds: 10
-            periodSeconds: 10
+            periodSeconds: 60
           volumeMounts:
             - name: app-config
               mountPath: /etc/app/config.yaml

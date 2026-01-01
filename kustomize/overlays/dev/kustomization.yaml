@@ -4,8 +4,9 @@ kind: Kustomization
 namespace: k3s-ds-learn-dev
 
 resources:
-- ../../base
-- sealed-secret.yaml
+  - ../../base
+  - sealed-secret.yaml
+  - ingress.yaml
 
 patches:
 - path: replicas.yaml
