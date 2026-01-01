@@ -1,6 +1,7 @@
 name: Build and Update Image Tag
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
