@@ -9,7 +9,7 @@ resources:
 images:
 - name: ghcr.io/daffahilmyf/go-impl-postgres-ha
   newName: ghcr.io/daffahilmyf/go-impl-postgres-ha
-  newTag: 34e9475d048eef79a8bcaadb859fd683fed301fe
+  newTag: ffc28ab7b53ef01b15d2c5df390bd5864da7f601
 
 configMapGenerator:
 - behavior: replace
