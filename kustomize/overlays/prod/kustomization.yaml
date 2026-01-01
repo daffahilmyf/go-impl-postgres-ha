@@ -17,7 +17,7 @@ patchesJson6902:
 images:
 - name: ghcr.io/daffahilmyf/go-impl-postgres-ha
   newName: ghcr.io/daffahilmyf/go-impl-postgres-ha
-  newTag: ffc28ab7b53ef01b15d2c5df390bd5864da7f601
+  newTag: a4ef68492a3cda80f4f23373977e5f62c1850356
 
 configMapGenerator:
 - behavior: replace
