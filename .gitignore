@@ -20,3 +20,4 @@ mem.pprof
 .vscode/
 
 config.yaml
+!kustomize/**/config.yaml
