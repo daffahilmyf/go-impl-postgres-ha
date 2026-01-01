@@ -7,7 +7,7 @@ database:
   name: "astartes"
   user: ""
   password: ""
-  sslmode: "disable"
+  sslmode: "require"
   connect_timeout: "5s"
   max_conns: 20
   min_conns: 0
