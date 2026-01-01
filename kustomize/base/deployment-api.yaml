@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-api
+  labels:
+    app.kubernetes.io/name: app-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: app-api
+    spec:
+      containers:
+        - name: app-api
+          image: ghcr.io/daffahilmyf/go-impl-postgres-ha:latest
+          imagePullPolicy: IfNotPresent
+          args: ["server", "--config", "/etc/app/config.yaml"]
+          ports:
+            - containerPort: 8080
+              name: http
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: app-config
+              mountPath: /etc/app/config.yaml
+              subPath: config.yaml
+              readOnly: true
+      volumes:
+        - name: app-config
+          configMap:
+            name: app-config

@@ -1,0 +1,58 @@
+name: Build and Update Image Tag
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-push-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/daffahilmyf/go-impl-postgres-ha:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Install kustomize
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Update dev image tag
+        run: |
+          kustomize edit set image ghcr.io/daffahilmyf/go-impl-postgres-ha=ghcr.io/daffahilmyf/go-impl-postgres-ha:${{ github.sha }}
+        working-directory: kustomize/overlays/dev
+
+      - name: Update prod image tag
+        run: |
+          kustomize edit set image ghcr.io/daffahilmyf/go-impl-postgres-ha=ghcr.io/daffahilmyf/go-impl-postgres-ha:${{ github.sha }}
+        working-directory: kustomize/overlays/prod
+
+      - name: Commit and push kustomize changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add kustomize/overlays/dev/kustomization.yaml kustomize/overlays/prod/kustomization.yaml
+          git commit -m "chore: update image tag to ${{ github.sha }}" || exit 0
+          git push
