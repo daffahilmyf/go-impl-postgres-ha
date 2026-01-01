@@ -4,21 +4,20 @@ kind: Kustomization
 namespace: k3s-ds-learn-prod
 
 resources:
-  - ../../base
-  - sealed-secret.yaml
+- ../../base
+- sealed-secret.yaml
 
 patchesJson6902:
-  - target:
-      group: ""
-      version: v1
-      kind: Namespace
-      name: k3s-ds-learn
-    path: namespace-patch.json
+- path: namespace-patch.json
+  target:
+    kind: Namespace
+    name: k3s-ds-learn
+    version: v1
 
 images:
 - name: ghcr.io/daffahilmyf/go-impl-postgres-ha
   newName: ghcr.io/daffahilmyf/go-impl-postgres-ha
-  newTag: a4ef68492a3cda80f4f23373977e5f62c1850356
+  newTag: e1fbc10c88bcb63daa46d82f6604a59f662bef27
 
 configMapGenerator:
 - behavior: replace
