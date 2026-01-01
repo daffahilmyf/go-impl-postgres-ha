@@ -19,6 +19,9 @@ spec:
           image: ghcr.io/daffahilmyf/go-impl-postgres-ha:latest
           imagePullPolicy: IfNotPresent
           args: ["server", "--config", "/etc/app/config.yaml"]
+          envFrom:
+            - secretRef:
+                name: app-secrets
           ports:
             - containerPort: 8080
               name: http

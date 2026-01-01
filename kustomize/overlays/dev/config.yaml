@@ -1,6 +1,13 @@
 database:
-  write_dsn: "postgres://user:pass@k3s-pg-lab-pooler.default.svc.cluster.local:5432/astartes?sslmode=disable"
-  read_dsn: "postgres://user:pass@k3s-pg-lab-pooler-repl.default.svc.cluster.local:5432/astartes?sslmode=disable"
+  write_dsn: ""
+  read_dsn: ""
+  host: "k3s-pg-lab-pooler.default.svc.cluster.local"
+  read_host: "k3s-pg-lab-pooler-repl.default.svc.cluster.local"
+  port: 5432
+  name: "astartes"
+  user: ""
+  password: ""
+  sslmode: "disable"
   connect_timeout: "5s"
   max_conns: 20
   min_conns: 0

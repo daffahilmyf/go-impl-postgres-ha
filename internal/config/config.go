@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -10,6 +11,13 @@ import (
 type Database struct {
 	WriteDSN          string        `mapstructure:"write_dsn"`
 	ReadDSN           string        `mapstructure:"read_dsn"`
+	Host              string        `mapstructure:"host"`
+	ReadHost          string        `mapstructure:"read_host"`
+	Port              int           `mapstructure:"port"`
+	Name              string        `mapstructure:"name"`
+	User              string        `mapstructure:"user"`
+	Password          string        `mapstructure:"password"`
+	SSLMode           string        `mapstructure:"sslmode"`
 	ConnectTimeout    time.Duration `mapstructure:"connect_timeout"`
 	MaxConns          int32         `mapstructure:"max_conns"`
 	MinConns          int32         `mapstructure:"min_conns"`
@@ -73,10 +81,14 @@ func Load(cfgFile string) (Config, error) {
 	v.SetEnvPrefix("GO_IMPL_POSTGRES_HA")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
+	_ = v.BindEnv("database.user", "DB_USER")
+	_ = v.BindEnv("database.password", "DB_PASS")
 
 	v.SetDefault("database.max_conns", 20)
 	v.SetDefault("database.min_conns", 0)
 	v.SetDefault("database.connect_timeout", "5s")
+	v.SetDefault("database.port", 5432)
+	v.SetDefault("database.sslmode", "disable")
 	v.SetDefault("database.max_conn_lifetime", "30m")
 	v.SetDefault("database.max_conn_idle_time", "5m")
 	v.SetDefault("database.health_check_period", "1m")
@@ -110,5 +122,37 @@ func Load(cfgFile string) (Config, error) {
 		return Config{}, err
 	}
 
+	cfg = applyDSNDefaults(cfg)
 	return cfg, nil
+}
+
+func applyDSNDefaults(cfg Config) Config {
+	if cfg.Database.WriteDSN == "" && cfg.Database.Host != "" && cfg.Database.Name != "" {
+		cfg.Database.WriteDSN = buildDSN(cfg.Database.Host, cfg.Database.Port, cfg.Database.Name, cfg.Database.User, cfg.Database.Password, cfg.Database.SSLMode)
+	}
+	if cfg.Database.ReadDSN == "" {
+		readHost := cfg.Database.ReadHost
+		if readHost == "" {
+			readHost = cfg.Database.Host
+		}
+		if readHost != "" && cfg.Database.Name != "" {
+			cfg.Database.ReadDSN = buildDSN(readHost, cfg.Database.Port, cfg.Database.Name, cfg.Database.User, cfg.Database.Password, cfg.Database.SSLMode)
+		}
+	}
+	return cfg
+}
+
+func buildDSN(host string, port int, name, user, password, sslmode string) string {
+	if sslmode == "" {
+		sslmode = "disable"
+	}
+	creds := ""
+	if user != "" {
+		creds = user
+		if password != "" {
+			creds += ":" + password
+		}
+		creds += "@"
+	}
+	return "postgres://" + creds + host + ":" + fmt.Sprintf("%d", port) + "/" + name + "?sslmode=" + sslmode
 }

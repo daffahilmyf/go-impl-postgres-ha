@@ -1,6 +1,13 @@
 database:
-  write_dsn: "postgres://postgres:postgres@localhost:5432/astartes?sslmode=require"
-  read_dsn: "postgres://postgres:postgres@localhost:5432/astartes?sslmode=require"
+  write_dsn: ""
+  read_dsn: ""
+  host: "localhost"
+  read_host: ""
+  port: 5432
+  name: "astartes"
+  user: ""
+  password: ""
+  sslmode: "disable"
   connect_timeout: "5s"
   max_conns: 20
   min_conns: 0

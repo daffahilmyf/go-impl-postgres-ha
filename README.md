@@ -26,6 +26,7 @@ cp config.yaml.example config.yaml
 
 Key settings:
 - `database.write_dsn` / `database.read_dsn`
+- Or use `database.host/name` and set `DB_USER`/`DB_PASS` via Secret/env
 - `nats.url`
 - `outbox.*`
 - `environment` (`dev` or `prod`)
